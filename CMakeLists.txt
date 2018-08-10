@@ -76,6 +76,14 @@ option (ENABLE_CPP11 "Build websocketpp with CPP11 features enabled." TRUE)
 option (BUILD_EXAMPLES "Build websocketpp examples." FALSE)
 option (BUILD_TESTS "Build websocketpp tests." FALSE)
 
+option (USE_ASIO_STANDALONE "build asio without boost" True)
+
+if (USE_ASIO_STANDALONE)
+	ADD_DEFINITIONS(-DASIO_STANDALONE )
+endif ()
+
+
+
 if (BUILD_TESTS OR BUILD_EXAMPLES)
 
     enable_testing ()
@@ -171,7 +179,9 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
 
     # Set BOOST_ROOT env variable or pass with cmake -DBOOST_ROOT=path.
     # BOOST_ROOT can also be defined by a previous run from cmake cache.
-    if (NOT "$ENV{BOOST_ROOT_CPP11}" STREQUAL "")
+    
+	if(NOT USE_ASIO_STANDALONE)
+	if (NOT "$ENV{BOOST_ROOT_CPP11}" STREQUAL "")
         # Scons documentation for BOOST_ROOT_CPP11:
         # "look for optional second boostroot compiled with clang's libc++ STL library
         # this prevents warnings/errors when linking code built with two different
@@ -236,6 +246,9 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
         message (FATAL_ERROR "Failed to find required dependency: boost")
     endif ()
 
+endif()	
+	
+	
     find_package(OpenSSL)
     find_package(ZLIB)
 endif()
